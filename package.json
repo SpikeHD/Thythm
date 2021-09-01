@@ -4,5 +4,11 @@
   "main": "index.js",
   "repository": "https://github.com/SpikeHD/Thythm",
   "author": "spikegd <spikegdofficial@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^4.1.2"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0"
+  }
 }
