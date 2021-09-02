@@ -1,4 +1,4 @@
-const menu = require('./game/menu')
+const menu = require('./game/mainMenu')
 
 ;(async () => {
   // Menu

@@ -1,5 +1,3 @@
-
-/* eslint-disable indent */
 const draw = (t) => console.log(t);
 const replace = (t) => process.stdout.write(t);
 const chalk = require('chalk');
@@ -8,62 +6,30 @@ const { POSITION, CLEAR } = require('../util/stdHelpers');
 
 let active = true;
 let selected = 0;
-const buttons = ['Music Select', 'Options', 'Exit'];
 const buttonPos = {};
 
 // For space calculation
 const columns = process.stdout.columns;
 const rows = process.stdout.rows-2;
 
-module.exports = async () => {
-  menuDraw();
+module.exports.init = async (buttons, keyHandler) => {
+  menuDraw(buttons);
 
   while(active) {
     const key = await keypress();
 
-    // Menu controller
-    switch(key) {
-      case 'right':
-        selected++;
-  
-        if (selected > buttons.length-1) selected = 0;
-        break;
-  
-      case 'left':
-        selected--;
-  
-        if (selected < 0) selected = buttons.length-1;
-        break;
-  
-      case 'enter':
-        menuHandle();
-        break;
-  
-      case 'escape':
-        process.exit();
-        break;
-    }
+    selected = await keyHandler(key, selected);
 
-    menuOptionSelect();
+    // If keyHandler returned false, it means we are done with the menu
+    if (!selected) active = false;
+
+    menuOptionSelect(buttons, selected);
   }
 };
 
-function menuHandle() {
-  const option = buttons[selected];
-
-  switch(option) {
-    case 'Music Select':
-      active = false;
-      break;
-    
-    case 'Exit':
-      process.exit();
-  }
-}
-
 // One-time drawn function that will populate our menu positions
 // allowing us to just overwrite them instead 
-function menuDraw() {
+function menuDraw(buttons) {
   // Clear console
   process.stdout.write(CLEAR);
 
@@ -75,7 +41,7 @@ function menuDraw() {
 
     // Button borders
     if (i === middle-1 || i === middle+1) {
-      row += Array(Math.round(columns/2)-bLength).fill(' ').join('')
+      row += Array(Math.round(columns/2)-bLength).fill(' ').join('');
 
       buttons.forEach(b => {
         row += '+' + Array(b.length+2).fill('-').join('') + '+ ';
@@ -108,7 +74,7 @@ function menuDraw() {
   }
 }
 
-function menuOptionSelect() {
+function menuOptionSelect(buttons, selected) {
   const middle = Math.round(rows/2)+1;
 
   // Iterate positions
